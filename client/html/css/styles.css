@@ -1,0 +1,860 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap');
+
+@font-face {
+    font-family: 'crock';
+    src: url('../fonts/crock.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Animasyon tanımları */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+@keyframes slideInTop {
+    from { transform: translateY(-20px) translateX(-50%); opacity: 0; }
+    to { transform: translateY(0) translateX(-50%); opacity: 1; }
+}
+
+@keyframes slideInBottom {
+    from { transform: translateY(20px) translateX(-50%); opacity: 0; }
+    to { transform: translateY(0) translateX(-50%); opacity: 1; }
+}
+
+@keyframes slideInLeft {
+    from { transform: translateX(-20px) translateY(-50%); opacity: 0; }
+    to { transform: translateX(0) translateY(-50%); opacity: 1; }
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(20px) translateY(-50%); opacity: 0; }
+    to { transform: translateX(0) translateY(-50%); opacity: 1; }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes checkmarkAppear {
+    0% { opacity: 0; transform: scale(0) rotate(45deg); }
+    50% { opacity: 1; transform: scale(1.2) rotate(45deg); }
+    100% { opacity: 1; transform: scale(1) rotate(45deg); }
+}
+
+@keyframes menuItemHover {
+    0% {
+        transform: translateY(2px);
+        opacity: 0.8;
+    }
+    50% {
+        transform: translateY(-1px);
+        opacity: 0.9;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Alt menü ok işareti */
+.submenu-item {
+    position: relative;
+}
+
+.submenu-arrow {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 8px;
+    border-top: 2px solid #fff;
+    border-right: 2px solid #fff;
+    transform: translateY(-50%) rotate(45deg);
+}
+
+.menu-item.submenu-item:hover .submenu-arrow {
+    border-color: #ffd700;
+}
+
+/* Özel Animasyonlar */
+@keyframes slideIn {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInScale {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes bounceIn {
+    0% {
+        transform: scale(0.3);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.8;
+    }
+    70% {
+        transform: scale(0.9);
+        opacity: 0.9;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes arrowPulse {
+    0% {
+        transform: rotate(45deg) scale(1);
+    }
+    50% {
+        transform: rotate(45deg) scale(1.2);
+    }
+    100% {
+        transform: rotate(45deg) scale(1);
+    }
+}
+
+/* Animasyon Sınıfları */
+.menu-item.slide-in {
+    animation: slideIn 0.3s ease-out;
+}
+
+.menu-item.fade-scale {
+    animation: fadeInScale 0.3s ease-out;
+}
+
+.menu-item.bounce {
+    animation: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Submenu Geçiş Animasyonları */
+.submenu-enter {
+    animation: slideIn 0.3s ease-out;
+}
+
+.submenu-exit {
+    animation: slideOut 0.3s ease-in;
+}
+
+/* Geri Düğmesi */
+.menu-back-button {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin: 10px;
+    cursor: pointer;
+    color: #FFFFFF;
+    background: rgba(0, 0, 0, 0.4);
+    border: none;
+    border-radius: 3px;
+    font-family: 'crock', serif;
+}
+
+.menu-back-button::before {
+    content: '←';
+    margin-right: 5px;
+    font-size: 1.2em;
+}
+
+.menu-back-button:hover {
+    background: rgba(0, 0, 0, 0.6);
+}
+
+        body {
+            display: block;
+            font-family: 'crock', serif;
+            background-color: transparent;
+            background-size: cover;
+            color: #E6D5B8;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+
+        .menu-container {
+            background: url('../images/inkroller_1a.png') no-repeat center center;
+            background-size: cover;
+            padding: 20px;
+            position: fixed; /* absolute yerine fixed kullanıyoruz */
+            width: 400px;
+            display: none;
+            height: 70%; /* 80% yerine auto kullanıyoruz */
+            max-height: 80vh; /* viewport height'ın 80%'i */
+            opacity: 0;
+            will-change: transform, opacity;
+            transition: opacity 0.3s ease;
+        }
+
+        .menu-container.visible {
+            opacity: 0.91;
+        }
+
+        /* Top Menu */
+        #topMenu {
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 364px;
+        }
+
+        /* Bottom Menu */
+        #bottomMenu {
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 364px;
+        }
+
+        /* Left Menu */
+        #leftMenu {
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            max-width: 400px;
+        }
+
+        /* Right Menu */
+        #rightMenu {
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            max-width: 400px;
+        }
+
+        /* Animasyonlar */
+        @keyframes slideInTop {
+            from {
+                transform: translateX(-50%) translateY(-100%);
+            }
+            to {
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        @keyframes slideInBottom {
+            from {
+                transform: translateX(-50%) translateY(100%);
+            }
+            to {
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                transform: translateY(-50%) translateX(-100%);
+            }
+            to {
+                transform: translateY(-50%) translateX(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateY(-50%) translateX(100%);
+            }
+            to {
+                transform: translateY(-50%) translateX(0);
+            }
+        }
+
+        /* Animasyon sınıfları */
+        #topMenu.visible {
+            animation: slideInTop 0.4s ease forwards;
+        }
+
+        #bottomMenu.visible {
+            animation: slideInBottom 0.4s ease forwards;
+        }
+
+        #leftMenu.visible {
+            animation: slideInLeft 0.4s ease forwards;
+        }
+
+        #rightMenu.visible {
+            animation: slideInRight 0.4s ease forwards;
+        }
+
+        .menu-title {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: #FFFFFF;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            position: relative;
+            background: url('../images/menu_header_1a.png') no-repeat center center;
+            background-size: contain;
+            padding: 15px;
+            margin: 0 auto 25px auto;
+            max-width: 80%;
+            min-height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-items-container {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 5px 0;
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+
+        #topMenuItems, #bottomMenuItems, #leftMenuItems, #rightMenuItems {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 5px 0;
+            min-height: 55%;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(139, 115, 85, 0.6) rgba(0, 0, 0, 0.3);
+        }
+
+        /* Webkit scrollbar styles */
+        #topMenuItems::-webkit-scrollbar,
+        #bottomMenuItems::-webkit-scrollbar,
+        #leftMenuItems::-webkit-scrollbar,
+        #rightMenuItems::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #topMenuItems::-webkit-scrollbar-track,
+        #bottomMenuItems::-webkit-scrollbar-track,
+        #leftMenuItems::-webkit-scrollbar-track,
+        #rightMenuItems::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 3px;
+        }
+
+        #topMenuItems::-webkit-scrollbar-thumb,
+        #bottomMenuItems::-webkit-scrollbar-thumb,
+        #leftMenuItems::-webkit-scrollbar-thumb,
+        #rightMenuItems::-webkit-scrollbar-thumb {
+            background: rgba(139, 115, 85, 0.6);
+            border-radius: 3px;
+        }
+
+        #topMenuItems::-webkit-scrollbar-thumb:hover,
+        #bottomMenuItems::-webkit-scrollbar-thumb:hover,
+        #leftMenuItems::-webkit-scrollbar-thumb:hover,
+        #rightMenuItems::-webkit-scrollbar-thumb:hover {
+            background: rgba(139, 115, 85, 0.8);
+        }
+
+        .menu-item, .menu-input-container {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            margin: 5px 10px;
+            cursor: default; /* Default cursor when mouse support is disabled */
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-size: 18px;
+            border: 1px solid transparent;
+            background: url('../images/selection_box_bg_1d.png') no-repeat center center;
+            background-size: 100% 100%;
+            border-radius: 3px;
+            position: relative;
+            transform-origin: center;
+        }
+
+        /* Apply pointer cursor when mouse support is enabled */
+        body.mouse-enabled .menu-item,
+        body.mouse-enabled .menu-input-container,
+        body.mouse-enabled .menu-select-container,
+        body.mouse-enabled .menu-submit-button,
+        body.mouse-enabled .menu-select-option,
+        body.mouse-enabled .menu-checkbox-container,
+        body.mouse-enabled .menu-checkbox {
+            cursor: pointer;
+        }
+
+        /* Only apply hover effects when mouse support is enabled */
+
+        body.mouse-enabled .menu-item:hover,
+        body.mouse-enabled .menu-input-container:hover,
+        body.mouse-enabled .menu-select-container:hover,
+        body.mouse-enabled .menu-submit-button:hover,
+        body.mouse-enabled .menu-checkbox-container:hover,
+        body.mouse-enabled .menu-checkbox:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
+        }
+
+        /* Hover durumu için ayrı stil */
+        .menu-item.hover {
+            /*background: url('../images/selection_box_bg_1d.png') no-repeat center center;*/
+            background-size: 100% 100%;
+            opacity: 0.8;
+        }
+
+        /* Active (seçili) durumu için ayrı stil */
+        .menu-item.active, .menu-input-container.active {
+            background: url('../images/selsected.png') no-repeat center center;
+            background-size: 100% 100%;
+            color: #FFFFFF;
+            animation: menuItemHover 0.3s ease forwards;
+        }
+
+        .menu-item-image {
+            width: 64px;
+            height: 64px;
+            margin-right: 15px;
+            object-fit: contain;
+            filter: brightness(0.9) sepia(0.2);
+        }
+
+        .menu-item-image.right {
+            margin-right: 0;
+            margin-left: 15px;
+            order: 2;
+        }
+
+        .menu-item-text {
+            flex: 1;
+        }
+
+        .menu-item-icons {
+            display: flex;
+            gap: 5px;
+            margin-left: 10px;
+        }
+
+        .menu-item-icon {
+            width: 16px;
+            height: 16px;
+            opacity: 0.8;
+        }
+
+        /* Checkbox styles */
+        .menu-checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-left: 10px;
+            cursor: default; /* Default cursor when mouse support is disabled */
+        }
+
+        .menu-checkbox {
+            position: relative;
+            width: 24px;
+            height: 24px;
+            background: url('../images/selection_box_bg_1d.png') no-repeat center center;
+            background-size: 100% 100%;
+            border: 1px solid #8B7355;
+            border-radius: 2px;
+            cursor: default; /* Default cursor when mouse support is disabled */
+            transition: background-image 0.2s ease;
+        }
+
+        .menu-checkbox.checked {
+            background: url('../images/selsected.png') no-repeat center center;
+            background-size: 100% 100%;
+        }
+
+        .menu-checkbox.checked::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 8px;
+            width: 6px;
+            height: 12px;
+            border: solid #FFFFFF;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+            animation: checkmarkAppear 0.3s ease-out;
+        }
+
+        .menu-item[data-type="checkbox"] {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-right: 15px;
+        }
+
+        .menu-item[data-type="checkbox"] .menu-item-text {
+            flex: 1;
+        }
+
+        .menu-item[data-type="checkbox"] .menu-checkbox-container {
+            margin-left: auto;
+        }
+
+        /*.menu-item:hover,*/
+        .menu-item.active {
+            background: url('../images/selsected.png') no-repeat center center;
+            background-size: 100% 100%;
+            color: #FFFFFF;
+            animation: menuItemHover 0.3s ease forwards;
+        }
+
+        .menu-item.active::before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+        }
+
+        /* Keyboard navigation focus outline */
+        .menu-item:focus, .menu-input-container:focus, .menu-submit-button:focus {
+            outline: none;
+        }
+
+        /* Submit button container */
+        .menu-submit-container {
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+            margin: 15px 0 5px 0;
+        }
+
+        /* Submit button */
+        .menu-submit-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 30px;
+            cursor: default; /* Default cursor when mouse support is disabled */
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #FFFFFF;
+            background: url('../images/selection_box_bg_1d.png') no-repeat center center;
+            background-size: 100% 100%;
+            border:none;
+            position: relative;
+            min-width: 200px;
+            text-align: center;
+            font-family: 'crock', serif;
+        }
+
+        /* Only apply hover effect when mouse support is enabled */
+        body.mouse-enabled .menu-submit-button:hover, .menu-submit-button.active {
+            background: url('../images/selsected.png') no-repeat center center;
+            background-size: 100% 100%;
+            color: #FFFFFF;
+            animation: pulse 0.4s ease;
+        }
+
+        .menu-submit-button-image {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+            object-fit: contain;
+        }
+
+        .menu-submit-button-image.right {
+            margin-right: 0;
+            margin-left: 10px;
+            order: 2;
+        }
+
+        .menu-footer {
+            display: flex;
+            flex-direction: column;
+            padding: 15px 20px;
+            min-height: 80px;
+            position: relative;
+        }
+
+        .menu-footer::before {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 15px;
+            background: url('../images/scroller_right_bottom.png') no-repeat center center;
+            background-size: contain;
+            display: none; /* Default hidden, will show when scrollable */
+        }
+
+        .scrollable .menu-footer::before {
+            display: block;
+        }
+
+        .menu-footer-content {
+            display: flex;
+            flex-direction: column; /* Değişiklik: row yerine column */
+            align-items: center; /* Değişiklik: flex-start yerine center */
+            gap: 15px;
+        }
+
+        .menu-footer-images {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .menu-footer-image {
+            width: 64px;
+            height: 64px;
+            object-fit: contain;
+            filter: brightness(0.9) sepia(0.2);
+        }
+
+        .menu-footer-text {
+            flex: 1;
+            font-size: 14px;
+            color: #ffffff;
+            letter-spacing: 1px;
+            line-height: 1.5;
+            text-align: center; /* Yeni: metni ortala */
+            width: 100%; /* Yeni: tam genişlik */
+        }
+
+        .menu-pagination {
+            text-align: right;
+            font-size: 14px;
+            color: #8B7355;
+            margin-top: 10px;
+            align-self: flex-end;
+        }
+
+        .menu-input-container {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            margin: 5px 10px;
+            background: url('../images/selection_box_bg_1d.png') no-repeat center center;
+            background-size: 100% 100%;
+            border-radius: 3px;
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+            flex-wrap: wrap; /* Allow wrapping for better layout */
+        }
+
+        /* Hover animasyonu */
+        @keyframes menuItemHover {
+            0% {
+                transform: translateY(2px);
+                opacity: 0.8;
+            }
+            50% {
+                transform: translateY(-1px);
+                opacity: 0.9;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .menu-input-container.hover {
+            background: url('../images/selection_box_bg_1d.png') no-repeat center center;
+            background-size: 100% 100%;
+            opacity: 0.8;
+        }
+
+        .menu-input-container.active {
+            background: url('../images/selsected.png') no-repeat center center;
+            background-size: 100% 100%;
+            animation: menuItemHover 0.3s ease forwards;
+        }
+
+        .menu-input-label {
+            color: #FFFFFF;
+            font-size: 18px;
+            margin-right: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            min-width: 120px;
+            width: 100%; /* Full width for better layout */
+            margin-bottom: 8px; /* Add space between label and input */
+            font-weight: bold; /* Make label more prominent */
+        }
+
+        .menu-input-image {
+            width: 64px;
+            height: 64px;
+            margin-right: 15px;
+            object-fit: contain;
+            filter: brightness(0.9) sepia(0.2);
+        }
+
+        .menu-input {
+            flex: 1;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.6);
+            border: 1px solid #483C32;
+            color: #E6D5B8;
+            font-family: 'crock', serif;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+            border-radius: 3px;
+            width: 100%; /* Full width for better layout */
+        }
+
+        .menu-input::placeholder {
+            color: #8B7355;
+        }
+
+        /* Select Menu Styles */
+        .menu-select-container {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            margin: 5px 10px;
+            cursor: default; /* Default cursor when mouse support is disabled */
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-size: 18px;
+            border: 1px solid transparent;
+            background: url('../images/selection_box_bg_1d.png') no-repeat center center;
+            background-size: 100% 100%;
+            border-radius: 3px;
+            position: relative;
+            transform-origin: center;
+            z-index: 2;
+            flex-wrap: wrap; /* Allow wrapping for better layout */
+        }
+
+        /* When dropdown is open, increase z-index to ensure it's above other elements */
+        .menu-select-container.dropdown-open {
+            z-index: 1001; /* Higher than the dropdown itself */
+        }
+
+        .menu-select-container.active {
+            background: url('../images/selsected.png') no-repeat center center;
+            background-size: 100% 100%;
+            color: #FFFFFF;
+            animation: menuItemHover 0.3s ease forwards;
+        }
+
+        .menu-select-label {
+            margin-right: 15px;
+            min-width: 120px;
+            color: #FFFFFF;
+            width: 100%; /* Full width for better layout */
+            margin-bottom: 8px; /* Add space between label and select */
+            font-weight: bold; /* Make label more prominent */
+        }
+
+        .menu-select-value {
+            flex: 1;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.6);
+            border: 1px solid #483C32;
+            color: #E6D5B8;
+            border-radius: 3px;
+            position: relative;
+            width: 100%; /* Full width for better layout */
+        }
+
+        .menu-select-value::after {
+            content: '';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 6px solid #E6D5B8;
+        }
+
+        .menu-select-dropdown {
+            position: absolute;
+            top: calc(100% + 5px); /* Position below the select container with a small gap */
+            left: 0;
+            right: 0;
+            margin: 0; /* Remove margin to prevent positioning issues */
+            background-color: rgba(0, 0, 0, 0.9);
+            border: 1px solid #483C32;
+            border-radius: 3px;
+            z-index: 1000;
+            max-height: 200px;
+            overflow-y: auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Add shadow for better visibility */
+            pointer-events: auto; /* Ensure mouse events are captured */
+        }
+
+        .menu-select-option {
+            padding: 12px 15px;
+            cursor: default; /* Default cursor when mouse support is disabled */
+            transition: all 0.2s ease;
+            color: #E6D5B8;
+            user-select: none; /* Prevent text selection */
+            display: block; /* Ensure it's a block element */
+        }
+
+        /* Only apply hover effects when mouse support is enabled */
+
+        body.mouse-enabled .menu-select-option:hover {
+            background-color: rgba(72, 60, 50, 0.6);
+        }
+
+        .menu-select-option.selected {
+            background-color: rgba(212, 175, 55, 0.3);
+            color: #FFFFFF;
+        }
+
+        /* Scrollbar Stilleri */
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(17, 17, 17, 0.8);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #483C32;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #D4AF37;
+        }
+
+
+
+
+
+
+
+
