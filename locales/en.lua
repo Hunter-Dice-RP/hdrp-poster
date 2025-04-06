@@ -33,6 +33,7 @@ qadr_settings.translations["en"] = {
     },
     prompts = {                            -- Button prompts
         pin = "Pin",                       -- Pin action
-        cancel = "Cancel"                  -- Cancel action
+        cancel = "Cancel",                 -- Cancel action
+        take_poster = "Take Poster"        -- Take poster action
     }
 }

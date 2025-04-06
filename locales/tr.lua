@@ -32,6 +32,7 @@ qadr_settings.translations["tr"] = {
     },
     prompts = {                           -- Action prompts
         pin = "Sabitle",                  -- Pin action
-        cancel = "İptal"                  -- Cancel action
+        cancel = "İptal",                 -- Cancel action
+        take_poster = "Posteri Incele"    -- Take poster action
     }
 }

@@ -803,7 +803,7 @@ function bountyPosterCreator()
         -- Handle interaction when player is within prompt distance
         elseif distance < promptDistance and DoesEntityExist(l.entity) then
             cin(0x7DFB49BCDB73089A,l.entity,1)
-            local takePoster = promptCreator("Take Poster",0xCEFD9220,false)
+            local takePoster = promptCreator(getlang("prompts","take_poster"),0xCEFD9220,false)
             while distance < promptDistance and DoesEntityExist(l.entity) do
                 Wait(0)
                 distance = #(playerCoords - vector3(l.location.coords.x, l.location.coords.y, playerCoords.z))
