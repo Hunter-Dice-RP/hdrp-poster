@@ -1,3 +1,4 @@
+lib.locale()
 -- Global state variables
 tempPrompt = {}       -- Stores temporary prompts
 tempprop = {}         -- Stores temporary props
@@ -12,29 +13,59 @@ promptDistance = 0.5  -- Distance for prompt activation
 closestBoard = nil    -- Reference to nearest board
 closestPoster = nil   -- Reference to nearest poster
 
+function allPosterClear()
+    -- Elimina los poster props
+    if posterProps then
+        for _, prop in pairs(posterProps) do
+            if DoesEntityExist(prop) then
+                DeleteEntity(prop)
+            end
+        end
+    end
+    posterProps = {}
+
+    -- Elimina los blips de los tableros
+    if posterBoardBlips then
+        for _, blip in pairs(posterBoardBlips) do
+            RemoveBlip(blip)
+        end
+    end
+    posterBoardBlips = {}
+
+    -- Limpia la lista de posters activos
+    activePosters = {}
+
+    -- También podrías resetear estos si están en uso visual:
+    closestBoard = nil
+    closestPoster = nil
+end
+
+
 -- Cleanup handler when resource stops
-AddEventHandler('onResourceStop', function(resourceName) 
-    if resourceName == GetCurrentResourceName() then
+AddEventHandler('onResourceStop', function(resourceName)
+    if resourceName ~= GetCurrentResourceName() then return end
+    if not Config.EnableTarget then
         -- Clean up prompts
         if tempPrompt then
             for k,l in pairs(tempPrompt)do
                 PromptDelete(l)
             end
         end
-        -- Clean up props
-        if tempprop then
-            for k,l in pairs(tempprop)do
-                DeleteEntity(l)
-            end
-        end
-        -- Clean up blips
-        if posterBoardBlips then
-            for _, blip in pairs(posterBoardBlips) do
-                RemoveBlip(blip)
-            end
+    end
+    -- Clean up props
+    if tempprop then
+        for k,l in pairs(tempprop)do
+            DeleteEntity(l)
         end
     end
-    exports["qadr_ui"]:allPosterClear()
+    -- Clean up blips
+    if posterBoardBlips then
+        for _, blip in pairs(posterBoardBlips) do
+            RemoveBlip(blip)
+        end
+    end
+
+    allPosterClear() -- exports["qadr_ui"]:allPosterClear()
 end)
 
 -- NUI Callback handlers
@@ -57,10 +88,10 @@ RegisterNUICallback('closeMenu', function(data, cb)
         allMenuDatas[data.name].menuData.cancelFunction(allMenuDatas[data.name])
     end
     closeMenu()
-    cb('ok')    
+    cb('ok')
 end)
 
-RegisterNUICallback("submitFormData", function(data,cb)    
+RegisterNUICallback("submitFormData", function(data,cb)
     if allMenuDatas[data.name] and allMenuDatas[data.name].menuData and allMenuDatas[data.name].menuData.submitFunction then
         allMenuDatas[data.name].menuData.submitFunction(allMenuDatas[data.name],data.formData)
     end
@@ -108,22 +139,48 @@ Citizen.CreateThread(function()
     end
 end)
 
+------------------------
+-- add values change qadr_ui
+function getAvailablePosterType(type)
+    local posterTypes = {
+        Poster = { "Poster0", "Poster1", "Poster2", "advertPoster2" },
+        legendaryPoster = { "legendaryPoster0", "legendaryPoster1", "legendaryPoster2" },
+    }
+
+    for _, poster in ipairs(posterTypes[type] or {}) do
+        local isUsed = false
+        for _, active in ipairs(activePosters) do
+            if active.posterid == poster then
+                isUsed = true
+                break
+            end
+        end
+        if not isUsed then
+            return poster
+        end
+    end
+    return nil
+end
+
+
+-----------------------
+
 -- Commands
 RegisterCommand("posterCreator",function()
     local menuData = {
         type = "show",
         position = "right",
         menuData = {
-            title = getlang("menu","title"),
+            title = locale("menu_title"),
             items = {
                 {
                     type = "select",
-                    label = getlang("menu","poster_type_select"),
+                    label = locale("menu_poster_type_select"),
                     value = "select",
                     options = {
                         { label = "Select", value = "select" },
-                        { label = getlang("menu","poster_type_default"), value = exports["qadr_ui"]:getEmptyposterlike("Poster") or "Poster0" },
-                        { label = getlang("menu","poster_type_legendary"), value = exports["qadr_ui"]:getEmptyposterlike("legendaryPoster") or "legendaryPoster1" },
+                        { label = locale("menu_poster_type_default"), value = getAvailablePosterType("Poster") or "Poster0" }, -- exports["qadr_ui"]:getEmptyposterlike("Poster") or "Poster0" },
+                        { label = locale("menu_poster_type_legendary"), value = getAvailablePosterType("legendaryPoster") or "legendaryPoster1" }, -- exports["qadr_ui"]:getEmptyposterlike("legendaryPoster") or "legendaryPoster1" },
                     },
                     data = { action = "setPosterId" },
                     callback = function(data)
@@ -140,34 +197,9 @@ RegisterCommand("posterCreator",function()
                 }
             },
             footer = {
-                text = getlang("menu","footer")
+                text = locale("menu_footer")
             }
         }
     }
     showMenu(menuData)
-end)
-
-RegisterCommand("setlang", function(source, args)
-    if args[1] then
-        local success = setLanguage(args[1])
-        if success then
-            TriggerEvent("chat:addMessage", {
-                color = {0, 255, 0},
-                multiline = true,
-                args = {"System", "Language changed to " .. args[1]}
-            })
-        else
-            TriggerEvent("chat:addMessage", {
-                color = {255, 0, 0},
-                multiline = true,
-                args = {"System", "Language " .. args[1] .. " not found."}
-            })
-        end
-    else
-        TriggerEvent("chat:addMessage", {
-            color = {255, 255, 0},
-            multiline = true,
-            args = {"System", "Current language: " .. qadr_settings.defaultlang}
-        })
-    end
-end)
+end, false)

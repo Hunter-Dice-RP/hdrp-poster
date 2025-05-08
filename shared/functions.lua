@@ -1,3 +1,4 @@
+lib.locale()
 local allobject = {}
 
 -- Handles item interaction animations with props
@@ -49,6 +50,7 @@ function taskiteminteraction(inventoryitemname,propname,itemInteractionState,int
 		afterinteraction(prop)
 	end
 end
+
 -- Creates an object/prop in the game world
 -- @param ... - Variable arguments: model, coords, network flags and other settings
 -- @return - Created object handle
@@ -81,8 +83,10 @@ function objectcreator(...)
 	local obje = CreateObject(_model,_coords,_network,_bScriptHostObj,_dynamic,_p7,_p8)
 	table.insert(tempprop,obje)
 	SetModelAsNoLongerNeeded(_model)
-	return obje
+
+    return obje
 end
+
 -- Deep copies a table including metatables
 -- @param orijinal - Original table to copy
 -- @return - Deep copy of the table
@@ -100,6 +104,7 @@ function tabloKopyala(orijinal)
     end
     return kopya
 end
+
 -- Deep copies a table but removes function references
 -- @param orijinal - Original table to copy
 -- @return - Deep copy of table without functions
@@ -120,6 +125,7 @@ function functionRemoveCopyTable(orijinal)
     end
     return kopya
 end
+
 -- Creates an interaction prompt in the game UI
 -- @param _str - Prompt text to display
 -- @param button - Button or table of buttons to trigger prompt
@@ -169,12 +175,14 @@ function promptCreator(_str,button,holdmode,group)
     tempPrompt[promptr] = promptr
 	return promptr
 end
+
 -- Shorthand for Citizen.InvokeNative
 -- @param ... - Arguments to pass to InvokeNative
 -- @return - Result from native call
 function cin(...)
     return Citizen.InvokeNative(...)
 end
+
 -- Displays a menu with the provided data
 -- @param data - Table containing menu configuration and items
 function showMenu(data)
@@ -184,6 +192,37 @@ function showMenu(data)
     SendNUIMessage(menuData)
     SetNuiFocus(true, false)
 end
+
+
+------------------
+-- add for delete qadr_ui
+function createPosterInUI(posterData)
+    -- Aquí puedes implementar cómo agregar el poster a la UI.
+    -- Podría ser crear un elemento visual en la pantalla con los datos del poster.
+    print("Creando poster con datos:", posterData)
+    -- Tu lógica para agregar el poster
+end
+
+local function createPosterEntity(model, coords, rotation)
+    local entity = objectcreator(model, coords, false, false, true, false, true)
+    SetEntityRotation(entity, rotation.x, rotation.y, rotation.z, 2, true)
+    return entity
+end
+
+function removePosterFromUI(posterid)
+    -- Aquí puedes implementar cómo eliminar el poster de la UI.
+    -- Podría ser algo como ocultar el poster o eliminarlo de una lista de UI.
+    print("Eliminando poster con ID:", posterid)
+    -- Tu lógica para eliminar el poster
+end
+
+local function removePosterEntity(entity)
+    if DoesEntityExist(entity) then
+        DeleteEntity(entity)
+    end
+end
+------------------
+
 -- Shows a submenu for poster configuration
 -- @param data - Table containing menu configuration
 -- @param posterId - String identifier for the poster
@@ -192,11 +231,11 @@ function showSubMenu(data, posterId)
         type = "show",
         position = "right",
         menuData = {
-            title = getlang("menu", "title"),
+            title = locale("menu_title"),
             items = {
                 {
                     type = "checkbox",
-                    label = getlang("menu", "labels", "visible"),
+                    label = locale("menu_labels_visible"),
                     checked = false,
                     data = { action = "isVisible" },
                     callback = function(data)
@@ -208,7 +247,7 @@ function showSubMenu(data, posterId)
                 },
                 {
                     type = "input",
-                    label = getlang("menu", "labels", "header"),
+                    label = locale("menu_labels_header"),
                     value = "",
                     data = { action = "header" },
                     callback = function(data)
@@ -220,7 +259,7 @@ function showSubMenu(data, posterId)
                 },
                 {
                     type = "input",
-                    label = getlang("menu", "labels", "price"),
+                    label = locale("menu_labels_price"),
                     value = "",
                     data = { action = "price" },
                     callback = function(data)
@@ -232,7 +271,7 @@ function showSubMenu(data, posterId)
                 },
                 {
                     type = "input",
-                    label = getlang("menu", "labels", "texture_dict"),
+                    label = locale("menu_labels_texture_dict"),
                     value = "bounty_target_01",
                     data = { action = "txd" },
                     callback = function(data)
@@ -244,7 +283,7 @@ function showSubMenu(data, posterId)
                 },
                 {
                     type = "input",
-                    label = getlang("menu", "labels", "texture"),
+                    label = locale("menu_labels_texture"),
                     value = "bounty_target_01",
                     data = { action = "tex" },
                     callback = function(data)
@@ -256,7 +295,7 @@ function showSubMenu(data, posterId)
                 },
                 {
                     type = "input",
-                    label = getlang("menu", "labels", "name"),
+                    label = locale("menu_labels_name"),
                     value = "",
                     data = { action = "name" },
                     callback = function(data)
@@ -268,7 +307,7 @@ function showSubMenu(data, posterId)
                 },
                 {
                     type = "input",
-                    label = getlang("menu", "labels", "body"),
+                    label = locale("menu_labels_body"),
                     value = "",
                     data = { action = "body" },
                     callback = function(data)
@@ -280,14 +319,14 @@ function showSubMenu(data, posterId)
                 },
                 {
                     type = "select",
-                    label = getlang("menu", "labels", "type"),
+                    label = locale("menu_labels_type"),
                     value = 1,
                     options = {
-                        { label = getlang("menu", "types", "type1"), value = 1 },
-                        { label = getlang("menu", "types", "type2"), value = 2 },
-                        { label = getlang("menu", "types", "type3"), value = 3 },
-                        { label = getlang("menu", "types", "type4"), value = 4 },
-                        { label = getlang("menu", "types", "type5"), value = 5 },
+                        { label = locale("menu_types_type1"), value = 1 },
+                        { label = locale("menu_types_type2"), value = 2 },
+                        { label = locale("menu_types_type3"), value = 3 },
+                        { label = locale("menu_types_type4"), value = 4 },
+                        { label = locale("menu_types_type5"), value = 5 },
                     },
                     data = { action = "type" },
                     callback = function(data)
@@ -298,9 +337,9 @@ function showSubMenu(data, posterId)
                     end
                 },
             },
-            submitText = getlang("menu", "submit"),
+            submitText = locale("menu_submit"),
             footer = {
-                text = getlang("menu", "footer")
+                text = locale("menu_footer")
             },
             submitFunction = function(itemData,formData)
                 local posterentity = itemData.menuData.posterentity
@@ -318,7 +357,7 @@ function showSubMenu(data, posterId)
                     coords = GetEntityCoords(posterentity),
                     rot = GetEntityRotation(posterentity)
                 }
-                exports["qadr_ui"]:removePoster(itemData.menuData.availablemodel)
+                removePosterFromUI(itemData.menuData.availablemodel) -- exports["qadr_ui"]:removePoster(itemData.menuData.availablemodel)
                 TriggerServerEvent('qadr_poster_creator:savePoster', posterData)
                 ClearPedTasks(PlayerPedId())
                 DeleteEntity(posterentity)
@@ -330,7 +369,7 @@ function showSubMenu(data, posterId)
                 end
                 if posterentity then
                     DeleteEntity(posterentity)
-                    exports["qadr_ui"]:removePoster(itemData.menuData.availablemodel)
+                    removePosterFromUI(itemData.menuData.availablemodel) -- exports["qadr_ui"]:removePoster(itemData.menuData.availablemodel)
                 end
             end
         }
@@ -339,7 +378,7 @@ function showSubMenu(data, posterId)
         menuData.menuData.items =  {
             {
                 type = "checkbox",
-                label = getlang("menu", "labels", "visible"),
+                label = locale("menu_labels_visible"),
                 checked = false,
                 data = { action = "isVisible" },
                 callback = function(data)
@@ -351,7 +390,7 @@ function showSubMenu(data, posterId)
             },
             {
                 type = "input",
-                label = getlang("menu", "labels", "texture_dict"),
+                label = locale("menu_labels_texture_dict"),
                 value = "bounty_target_01",
                 data = { action = "txd" },
                 callback = function(data)
@@ -363,7 +402,7 @@ function showSubMenu(data, posterId)
             },
             {
                 type = "input",
-                label = getlang("menu", "labels", "texture"),
+                label = locale("menu_labels_texture"),
                 value = "bounty_target_01",
                 data = { action = "tex" },
                 callback = function(data)
@@ -375,7 +414,7 @@ function showSubMenu(data, posterId)
             },
             {
                 type = "select",
-                label = getlang("menu", "labels", "difficulty"),
+                label = locale("menu_labels_difficulty"),
                 value = 1,
                 options = {
                     { label = "1", value = 1 },
@@ -398,7 +437,7 @@ function showSubMenu(data, posterId)
         menuData.menuData.items = {
             {
                 type = "checkbox",
-                label = getlang("menu", "labels", "visible"),
+                label = locale("menu_labels_visible"),
                 checked = false,
                 data = { action = "isVisible" },
                 callback = function(data)
@@ -423,6 +462,52 @@ function showSubMenu(data, posterId)
         end
     end
 end
+
+local activePosters = {}
+
+function getAvailablePosterType(baseType)
+    if baseType == "Poster" or baseType == "legendaryPoster" then
+        for posterId, isUsed in pairs(activePosters[baseType]) do
+            if not isUsed then
+                return posterId
+            end
+        end
+    end
+    return nil -- todos en uso
+end
+
+function markPosterUsed(posterId)
+    if string.find(posterId, "Poster") then
+        for group, posters in pairs(activePosters) do
+            if posters[posterId] ~= nil then
+                activePosters[group][posterId] = true
+            end
+        end
+    end
+end
+
+local posters = {}
+
+function createPoster(posterData)
+    local posterId = posterData.posterid
+    if posters[posterId] then
+        return posters[posterId], "alreadyActive"
+    end
+
+    posters[posterId] = {
+        data = posterData,
+        update = function(self, newData)
+            for k, v in pairs(newData) do
+                self.data[k] = v
+            end
+        end
+    }
+
+    markPosterUsed(posterId)
+
+    return posters[posterId], "created"
+end
+
 -- Creates a poster entity in the game world
 -- @param data - Table containing poster configuration
 -- @param withAnim - Boolean to determine if animation should be played
@@ -440,9 +525,9 @@ function posterCreator(data, withAnim)
         Poster1         = { model = "mp005_p_mp_bountyposter02x" },
         Poster2         = { model = "mp005_p_mp_bountyposter03x" },
     }
-    local availablemodel = exports["qadr_ui"]:getEmptyposterlike(string.gsub(data.value, "%d$", ""))
+    local availablemodel = getAvailablePosterType(string.gsub(data.value, "%d$", ""))-- exports["qadr_ui"]:getEmptyposterlike(string.gsub(data.value, "%d$", ""))
     if availablemodel == nil then
-        TriggerEvent('redem_roleplay:Tip', getlang("errors","max_posters"), 5000)
+        TriggerEvent('redem_roleplay:Tip', locale("errors_max_posters"), 5000)
         return false
     end
     local model = usableModels[availablemodel].model or "mp005_p_mp_bountyposter01x"
@@ -473,7 +558,8 @@ function posterCreator(data, withAnim)
             coords.z + 0.5
         )
         -- Create poster object
-        posterObj = objectcreator(model, posterPos, true, true, true, true, true) --CreateObject(GetHashKey(model), posterPos.x, posterPos.y, posterPos.z, true, true, true)
+        posterObj = CreateObject(GetHashKey(model), posterPos.x, posterPos.y, posterPos.z, true, true, true) -- objectcreator(model, posterPos, true, true, true, true, true)
+        
         yerlestimi = posterPlacer(posterObj)
         if yerlestimi then
             local cam = CreateCam("DEFAULT_SCRIPTED_CAMERA", true)
@@ -499,7 +585,7 @@ function posterCreator(data, withAnim)
                 body = "",
                 posterid = availablemodel or "Poster0"
             }
-            local poster,status = exports["qadr_ui"]:createPoster(posterData)
+            local poster,status = createPoster(posterData) -- exports["qadr_ui"]:createPoster(posterData)
             if status =="alreadyActive" then
                 poster:update(posterData)
             end
@@ -524,11 +610,12 @@ end
 -- @param data - Table containing the properties to update (e.g., {isVisible = true})
 -- @param posterId - String identifier of the poster to update (e.g., "Poster0", "legendaryPoster1")
 function updatePoster(data,posterId)
-    local poster,status = exports["qadr_ui"]:createPoster({posterid = posterId})
+    local poster,status = createPoster({posterid = posterId}) -- exports["qadr_ui"]:createPoster({posterid = posterId})
     if poster and status =="alreadyActive" then
         poster:update(data)
     end
 end
+
 -- Processes callbacks for menu items based on user interaction
 -- @param {table} itemData - Data object containing menu item information
 --   @param {string} itemData.name - Menu name identifier
@@ -564,6 +651,7 @@ function allCallBackRunner(itemData)
         selectedItem.callback(itemData)
     end
 end
+
 -- Calculates coordinates in 3D space based on camera rotation and distance
 -- @param {number} distance - Distance from camera position
 -- @param {table} coords - Camera position coordinates [x, y, z]
@@ -582,6 +670,7 @@ function GetCoordsFromCam(distance, coords)
         coords[3] + dirZ * distance
     )
 end
+
 -- Gets coordinates and entity information from the player's camera view
 -- @return tuple - Returns multiple values: success, hit status, coordinates, surface normal, and entity hit
 function GetInView()
@@ -598,22 +687,21 @@ end
 function posterPlacer(poster)
     -- Disable collision while placing
     SetEntityCollision(poster, false, false)
-    
     -- Create interaction prompts
-    local hangPoster = promptCreator(getlang("prompts","pin"), 0xCEE12B50, false)
-    local esc = promptCreator(getlang("prompts","cancel"), 0x8E90C7BB, false)
-    
+    local hangPoster = promptCreator(locale("prompts_pin"), 0xCEE12B50, false)
+    local esc = promptCreator(locale("prompts_cancel"), 0x8E90C7BB, false)
+
     local rotdiff = 10.0
     local rtn = false
-    
+
     while true do
         Wait(1)
         rtn = true
-        
+
         -- Get raycast information from camera view
         local first, Hit, spawnPos, second, entity = GetInView()
-        local boraddatas = qadr_settings.validBoards[GetEntityModel(entity)]
-        
+        local boraddatas = Config.validBoards[GetEntityModel(entity)]
+
         -- Check if hit valid surface
         if Hit and (entity ~= poster or entity ~= PlayerPedId()) and boraddatas then
             -- Calculate poster position with offset from wall
@@ -623,13 +711,13 @@ function posterPlacer(poster)
                 spawnPos.y - (first.y * offsetDistance),
                 spawnPos.z
             )
-            
+
             -- Update poster position and rotation
             SetEntityCoordsNoOffset(poster, posterPos.x, posterPos.y, posterPos.z, true, true, true)
             local angle = math.atan2(first.y, first.x)
             local rotation = (math.deg(angle) - 90) % 360
             SetEntityHeading(poster, rotation)
-            
+
             -- Check for confirmation or cancellation
             if PromptIsReleased(hangPoster) then
                 break
@@ -640,14 +728,15 @@ function posterPlacer(poster)
             end
         end
     end
-    
+
     -- Clean up prompts and restore collision
     PromptDelete(hangPoster)
     PromptDelete(esc)
     SetEntityCollision(poster, true, true)
-    
+
     return rtn
 end
+
 -- Closes the menu interface and cleans up camera
 -- Disables NUI focus and sends close message to UI
 function closeMenu()
@@ -668,7 +757,7 @@ function takeClosestPoster(entity)
     local propModels = {
         "mp005_p_mp_bountyposter01x",
         "mp005_p_mp_bountyposter02x",
-        "mp005_p_mp_bountyposter03x",        
+        "mp005_p_mp_bountyposter03x",
     }
     local animDict = "mech_inventory@document@world_player_inspect_poster_vertical@144cm@paper@w32-2_h45-2_foldverticalhorizontal"
     local playerAnim = "base"
@@ -708,11 +797,12 @@ function takeClosestPoster(entity)
         end
     end
 end
+
 -- Creates and manages poster board entities in the game world
 -- Finds the closest board to player and spawns/maintains its entity
 function bountyBoardCreator()
     -- Find closest board by checking distance to all configured boards
-    for k,l in pairs(qadr_settings.posterBoards)do
+    for k,l in pairs(Config.posterBoards)do
         local distance = #(playerCoords - l.coords)
         if distance < minDistance then
             closestBoard = l
@@ -726,14 +816,14 @@ function bountyBoardCreator()
     if closestBoard then
         -- Try to find existing board entity at location
         closestBoard.entity = GetClosestObjectOfType(closestBoard.coords.x, closestBoard.coords.y, closestBoard.coords.z, 2.50,closestBoard.boardmodel)
-        
+
         -- If no entity exists, create new board
         if closestBoard.entity == 0 then
             -- Create board object with specified model and position
             closestBoard.entity = objectcreator(closestBoard.boardmodel, closestBoard.coords, false, false, true, false, true)
             -- Set board rotation
             SetEntityRotation(closestBoard.entity, closestBoard.rot.x, closestBoard.rot.y, closestBoard.rot.z, 2, true)
-        end        
+        end
     end
 end
 
@@ -748,15 +838,16 @@ function bountyPosterCreator()
                 DeleteEntity(l.entity)
                 l.entity = nil
                 l.asildi = false
-                exports["qadr_ui"]:removePoster(l.posterid)
+                removePosterFromUI(l.posterid)  --exports["qadr_ui"]:removePoster(l.posterid)
             end
         end
     end
 
     -- Create or update nearby posters
     for k,l in pairs(activePosters) do
-        local distance = #(playerCoords - vector3(l.location.coords.x, l.location.coords.y, playerCoords.z))
-        if distance < minDistance and not l.asildi then            
+        local distance = #(playerCoords - vector3(l.location.coords.x, l.location.coords.y, l.location.coords.z))
+
+        if distance < minDistance and not l.asildi then
             closestPoster = l
             -- Define available poster models for different poster types
             local usableModels = {
@@ -769,14 +860,14 @@ function bountyPosterCreator()
                 Poster2         = { model = "mp005_p_mp_bountyposter03x" },
             }
             -- Get available poster type from UI system
-            local postertip = exports["qadr_ui"]:getEmptyposterlike(closestPoster.data.posterType)
+            local postertip = getAvailablePosterType(closestPoster.data.posterType) -- exports["qadr_ui"]:getEmptyposterlike(closestPoster.data.posterType)
             l.posterid = postertip
             if not postertip then return end
 
             local model = usableModels[postertip].model
             -- Initialize entity reference
             closestPoster.entity = 0
-            
+
             -- Create new poster entity if none exists
             if closestPoster.entity == 0 then
                 -- Create and position the poster object
@@ -796,33 +887,53 @@ function bountyPosterCreator()
                     posterid = postertip
                 }
                 -- Create poster in UI system
-                local poster, status = exports["qadr_ui"]:createPoster(posterData)
+                local poster, status = createPoster(posterData) -- exports["qadr_ui"]:createPoster(posterData)
                 l.asildi = true
                 Wait(200)
+
+                if Config.EnableTarget and not l.targetAdded then
+                    exports.ox_target:addLocalEntity(l.entity, {
+                        {
+                            name = 'obj_poster_take',
+                            icon = 'far fa-eye',
+                            label = locale("prompts_take_poster"),
+                            onSelect = function(entity)
+                                takeClosestPoster(entity)
+                            end,
+                            distance = 3.0
+                        }
+                    })
+                    l.targetAdded = true
+                end
+
             end
         -- Handle interaction when player is within prompt distance
         elseif distance < promptDistance and DoesEntityExist(l.entity) then
-            cin(0x7DFB49BCDB73089A,l.entity,1)
-            local takePoster = promptCreator(getlang("prompts","take_poster"),0xCEFD9220,false)
-            while distance < promptDistance and DoesEntityExist(l.entity) do
-                Wait(0)
-                distance = #(playerCoords - vector3(l.location.coords.x, l.location.coords.y, playerCoords.z))
-                if distance > promptDistance then 
-                    break
+            if not Config.EnableTarget then
+                cin(0x7DFB49BCDB73089A,l.entity,1)
+
+                local takePoster = promptCreator(locale("prompts_take_poster"),0xCEFD9220,false)
+                while distance < promptDistance and DoesEntityExist(l.entity) do
+                    Wait(0)
+                    distance = #(playerCoords - vector3(l.location.coords.x, l.location.coords.y, playerCoords.z))
+                    if distance > promptDistance then
+                        break
+                    end
+                    if PromptIsReleased(takePoster) then
+                        cin(0x7DFB49BCDB73089A,l.entity,0)
+                        takeClosestPoster(l.entity)
+                        break
+                    end
                 end
-                if PromptIsReleased(takePoster) then
-                    cin(0x7DFB49BCDB73089A,l.entity,0)
-                    takeClosestPoster(l.entity)
-                    break
-                end
+                cin(0x7DFB49BCDB73089A,l.entity,0)
+                PromptDelete(takePoster)
             end
-            cin(0x7DFB49BCDB73089A,l.entity,0)
-            PromptDelete(takePoster)
         -- Clean up poster if entity no longer exists
         elseif distance < minDistance and l.asildi and not DoesEntityExist(l.entity) then
             l.asildi = false
-            exports["qadr_ui"]:removePoster(l.posterid)
-            l.entity = nil            
+            removePosterFromUI(l.posterid)  --exports["qadr_ui"]:removePoster(l.posterid)
+            l.entity = nil
+            l.targetAdded = false
         end
     end
 end

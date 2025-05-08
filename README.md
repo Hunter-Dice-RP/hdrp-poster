@@ -18,7 +18,6 @@ This resource requires the QADR UI framework to function. QADR UI is a paid reso
 - Configurable poster board locations throughout the map
 
 ## Dependencies
-- [Redem Roleplay](https://github.com/RedEM-RP/redem_roleplay) (Required)
 - [QADR UI Framework](https://west-world.tebex.io/package/5165474) (Required)
 
 ## Installation
@@ -42,16 +41,7 @@ ensure qadr_poster_creator
 
 ## Configuration
 
-The script can be configured through the `conf.lua` file:
-
-```lua
-qadr_settings = {
-    defaultlang = "en", -- Sets the default language to English.
-    translations = {},
-}
-```
-
-To add additional languages, create new language files in the `locales` folder following the format of `en.lua`.
+To add additional languages, create new language files in the `locales` folder following the format of `en.json`.
 
 ### Poster Board Locations
 
@@ -168,12 +158,12 @@ Each poster board configuration includes:
   - `unlocked_files/` - Editable script files
 - `server/` - Server-side scripts
 - `shared/` - Shared functions and utilities
-- `locales/` - Language files for localization
 
 ## Support
 
 For support, bug reports, or feature requests, please open an issue on the repository or contact the developer directly.
 
-## Credits
-
+## Credits AO
 Developed by QADR - A premium script for RedM roleplay servers.
+
+## Version Sadicius

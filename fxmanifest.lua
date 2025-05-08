@@ -11,23 +11,21 @@ files {
     'client/html/css/*.css',
     'client/html/images/*.png',
     'client/html/fonts/*.ttf',
+    'locales/*.json'
 }
 
 shared_script {
-    "conf.lua",
-    "locales/*.lua",
+    '@ox_lib/init.lua',
     "shared/functions.lua",
-    "shared/localization.lua",
+    "conf.lua",
 }
 
 client_script {
-    "client/client.lua",
+    "client/*.lua",
 }
 
 server_script {
-    "server/verification.lua",
-    "server/server.lua",
+    "server/*.lua",
 }
 
 lua54 'yes'
-    
